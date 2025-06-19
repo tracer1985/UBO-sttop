@@ -1,0 +1,27 @@
+---
+- name: Start EAP-7.3.0 and monitor log until site is up
+  hosts: all
+  become: yes
+  become_user: webadm
+  tasks:
+    - name: Ensure /opt/webadm/EAP-7.3.0/bin exists
+      file:
+        path: /opt/webadm/EAP-7.3.0/bin
+        state: directory
+
+    - name: Start EAP standalone.sh with nohup
+      shell: nohup ./standalone.sh &
+      args:
+        chdir: /opt/webadm/EAP-7.3.0/bin
+      async: 0
+      poll: 0
+
+    - name: Show last 50 lines of nohup.out after site is up
+      shell: tail -n 50 nohup.out
+      args:
+        chdir: /opt/webadm/EAP-7.3.0/bin
+      register: nohup_log
+
+    - name: Print nohup.out log tail
+      debug:
+        msg: "{{ nohup_log.stdout }}"
