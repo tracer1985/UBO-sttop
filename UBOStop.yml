@@ -1,11 +1,11 @@
 ---
-- name: Kill all 'nc -l' processes as root
+- name: Login as root and kill all netcat ('nc -l') processes
   hosts: all
   remote_user: root
   become: yes
 
   tasks:
-    - name: Kill all processes with 'nc -l' in their name
+    - name: Kill all netcat 'nc -l' processes
       shell: |
         ps -ef | grep 'nc -l' | grep -v grep | awk '{print $2}' | xargs -r kill -9
       args:
