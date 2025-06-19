@@ -1,14 +1,13 @@
 ---
-- name: Kill all running netcat (nc) processes
+- name: Kill all netcat (nc) processes as root
   hosts: all
   become: yes
   tasks:
     - name: Kill all netcat (nc) processes
-      ansible.builtin.shell: |
-        pkill -f 'nc'
+      shell: |
+        pkill -9 nc || pkill -9 netcat || true
       ignore_errors: yes
-      register: kill_nc_result
 
-    - name: Output result
-      ansible.builtin.debug:
-        var: kill_nc_result
+    - name: Mark task as completed
+      debug:
+        msg: "Completed"
