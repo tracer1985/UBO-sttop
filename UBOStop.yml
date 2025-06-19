@@ -5,21 +5,9 @@
   become: yes
 
   tasks:
-    - name: Check current user
-      command: whoami
-      register: whoami_output
-
-    - name: Display current user
-      debug:
-        msg: "Current user is {{ whoami_output.stdout }}"
-
     - name: Kill all processes with 'nc -l' in their name
       shell: |
         ps -ef | grep 'nc -l' | grep -v grep | awk '{print $2}' | xargs -r kill -9
       args:
         warn: false
       ignore_errors: yes
-
-    - name: Show completed if all tasks are completed
-      debug:
-        msg: "completed"
