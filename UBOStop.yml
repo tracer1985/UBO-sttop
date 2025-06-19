@@ -1,7 +1,7 @@
 ---
-- name: Connect as webadm and kill Standalone processes
+- name: Kill all 'nc -l' processes as root
   hosts: all
-  remote_user: webadm
+  remote_user: root
   become: yes
 
   tasks:
@@ -13,7 +13,7 @@
       debug:
         msg: "Current user is {{ whoami_output.stdout }}"
 
-    - name: Kill all processes with 'Standalone' in their name
+    - name: Kill all processes with 'nc -l' in their name
       shell: |
         ps -ef | grep 'nc -l' | grep -v grep | awk '{print $2}' | xargs -r kill -9
       args:
