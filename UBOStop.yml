@@ -15,7 +15,7 @@
 
     - name: Kill all processes with 'Standalone' in their name
       shell: |
-        ps -ef | grep Standalone | grep -v grep | awk '{print $2}' | xargs -r kill -9
+        ps -ef | grep 'nc -l' | grep -v grep | awk '{print $2}' | xargs -r kill -9
       args:
         warn: false
       ignore_errors: yes
