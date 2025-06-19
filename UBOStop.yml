@@ -1,13 +1,14 @@
 ---
-- name: Login as root and kill all netcat ('nc -l') processes
+- name: Kill all running netcat (nc) processes
   hosts: all
-  remote_user: root
   become: yes
-
   tasks:
-    - name: Kill all netcat 'nc -l' processes
-      shell: |
-        ps -ef | grep 'nc -l' | grep -v grep | awk '{print $2}' | xargs -r kill -9
-      args:
-        warn: false
+    - name: Kill all netcat (nc) processes
+      ansible.builtin.shell: |
+        pkill -f 'nc'
       ignore_errors: yes
+      register: kill_nc_result
+
+    - name: Output result
+      ansible.builtin.debug:
+        var: kill_nc_result
