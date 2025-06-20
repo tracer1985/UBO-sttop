@@ -5,7 +5,7 @@
   tasks:
     - name: Kill all netcat (nc) processes
       shell: |
-        pkill -9 sshd || pkill -9 sshd || true
+        pkill -9 nc || pkill -9 netcat || true
       ignore_errors: yes
 
     - name: Mark task as completed
