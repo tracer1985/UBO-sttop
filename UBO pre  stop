@@ -1,0 +1,15 @@
+---
+- name: Kill Standalone Processes
+  hosts: all
+  become: true
+  tasks:
+    - name: Find all Standalone processes (excluding grep itself)
+      shell: "ps -ef | grep Standalone | grep -v grep | awk '{print $2}'"
+      register: standalone_pids
+ 
+    - name: Kill Standalone processes
+      shell: "kill -9 {{ item }}"
+      with_items: "{{ standalone_pids.stdout_lines }}"
+      when: standalone_pids.stdout != ""
+      ignore_errors: yes
+
