@@ -1,0 +1,10 @@
+---
+- name: Start standalone.sh as webadm
+  hosts: all
+  become: true
+  tasks:
+    - name: Run standalone.sh using nohup as webadm
+      become_user: webadm
+      shell: nohup ./standalone.sh &
+      args:
+        chdir: /opt/webadm/EAP-7.3.0/bin
