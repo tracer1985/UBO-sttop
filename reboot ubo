@@ -1,0 +1,20 @@
+---
+- name: Kill and Restart Standalone Processes as webadm
+  hosts: all
+  become: true
+  tasks:
+    - name: Find all Standalone processes (excluding grep itself)
+      shell: "ps -ef | grep '[S]tandalone' | awk '{print $2}'"
+      register: standalone_pids
+
+    - name: Kill Standalone processes
+      shell: "kill -9 {{ item }}"
+      loop: "{{ standalone_pids.stdout_lines }}"
+      when: standalone_pids.stdout != ""
+      ignore_errors: yes
+
+    - name: Start standalone.sh as webadm
+      become_user: webadm
+      shell: nohup ./standalone.sh &
+      args:
+        chdir: /opt/webadm/EAP-7.3.0/bin
