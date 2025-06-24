@@ -1,8 +1,8 @@
 ---
 - name: Copy all files 
   hosts: all
-  become: webadm
-  
+  become: yes
+
   vars:
     src_file: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
     destination_dir: "/opt/webadm/deployment/loyalty/staging/1.83.0/app/"
@@ -14,7 +14,15 @@
         group: webadm
         recurse: yes
 
-    - name: Copy all files from src to the destination directory without changing destination ownership
-      copy:
+    - name: Copy all files from src to the destination directory and retain ownership and permissions
+      synchronize:
         src: "{{ src_file }}"
         dest: "{{ destination_dir }}"
+        archive: yes
+        perms: yes
+        owner: yes
+        group: yes
+        times: yes
+        rsync_opts:
+          - "--numeric-ids"
+      delegate_to: "{{ inventory_hostname }}"
