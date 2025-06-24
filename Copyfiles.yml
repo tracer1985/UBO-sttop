@@ -1,4 +1,3 @@
----
 - name: Copy files and backup if existing
   hosts: all
   vars:
@@ -6,6 +5,12 @@
     dest_dir: "/opt/webadm/deployment/loyalty/staging/1.83.0/app"
     backup_dir: "/tmp/deployment/backup_2025-06-24"
   tasks:
+    - name: Ensure backup directory exists
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: '0755'
+
     - name: Find files to be copied
       find:
         paths: "{{ src_dir }}"
