@@ -1,11 +1,19 @@
 ---
-- name: Create /tmp/deployment/backup directory with today's date as root
+- name: Create /tmp/deployment/backup and Deployment directory with today's date as root
   hosts: all
   become: yes
   tasks:
     - name: Create backup directory with today's date
       file:
         path: "/tmp/deployment/backup_{{ lookup('pipe', 'date +%Y-%m-%d') }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Create backup directory with today's date
+      file:
+        path: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}"
         state: directory
         owner: root
         group: root
