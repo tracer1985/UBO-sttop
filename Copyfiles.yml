@@ -30,11 +30,3 @@
       loop: "{{ files_and_dirs.files }}"
       loop_control:
         label: "{{ item.path | regex_replace('^' + src_dir + '/', '') }}"
-
-    - name: Copy all files and directories recursively to destination
-      synchronize:
-        src: "{{ src_dir }}/"
-        dest: "{{ dest_dir }}/"
-        recursive: yes
-        rsync_opts:
-          - "--chmod=Du=rwx,Dg=rx,Do=rx,Fu=rw,Fg=r,Fo=r"
