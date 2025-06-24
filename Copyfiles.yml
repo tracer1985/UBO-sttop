@@ -7,23 +7,9 @@
     src_file: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
     destination_dir: "/opt/webadm/deployment/loyalty/staging/1.83.0/app/"
   tasks:
-    - name: Ensure destination directory exists
-      file:
-        path: "{{ destination_dir }}"
-        state: directory
-        owner: webadm
-        group: webadm
-        mode: '0755'
-
+  
     - name: Copy all files from /test to the destination directory
       copy:
         src: "{{ src_file }}"
         dest: "{{ destination_dir }}"
         remote_src: yes
-
-    - name: opt/webadm/deployment/loyalty/staging/1.83.0/app is owned by webadm
-      ansible.builtin.file:
-        path: "opt/webadm/deployment/loyalty/staging/1.83.0/app/"
-        owner: webadm
-        group: webadm
-        recurse: yes
