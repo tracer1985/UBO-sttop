@@ -18,6 +18,4 @@
       synchronize:
         src: "{{ src_file }}"
         dest: "{{ destination_dir }}"
-        owner: yes     # Explicitly retain owner
-        group: yes     # Explicitly retain group
         recursive: yes
