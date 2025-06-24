@@ -1,7 +1,7 @@
 ---
 - name: Copy all files 
   hosts: all
-  become: yes
+  become: webadm
   
   vars:
     src_file: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
