@@ -5,7 +5,10 @@
 
   vars:
     src_file: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
+    back_file: "/tmp/deployment/backup_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
     destination_dir: "/opt/webadm/deployment/loyalty/staging/1.83.0/app/"
+    today: "{{ lookup('pipe', 'date +%Y-%m-%d') }}"
+
   tasks:
     - name: Ensure source files owned by webadm:webadm
       file:
@@ -13,6 +16,28 @@
         owner: webadm
         group: webadm
         recurse: yes
+
+    - name: Get list of files in destination directory
+      find:
+        paths: "{{ destination_dir }}"
+        file_type: file
+      register: found_files
+
+    - name: Backup files that will be overwritten
+      when: found_files.files|length > 0
+      block:
+        - name: Ensure backup directory exists
+          file:
+            path: "{{back_file}}"
+            state: directory
+            mode: '0755'
+
+        - name: Backup each file with date suffix
+          copy:
+            src: "{{ item.path }}"
+            dest: "{{back_file}}"
+            remote_src: yes
+          loop: "{{ found_files.files }}"
 
     - name: Copy all files from src to the destination directory and retain ownership and permissions
       synchronize:
