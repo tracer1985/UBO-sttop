@@ -1,32 +1,29 @@
 ---
-- name: Recursively copy all files and backup if existing
+- name: Copy all files 
   hosts: all
+  become: yes
+  remote_user: root
   vars:
-    src_dir: "/tmp/deployment/deployment_2025-06-24"
-    dest_dir: "/opt/webadm/deployment/loyalty/staging/1.83.0/app"
-    backup_dir: "/tmp/deployment/backup_2025-06-24"
+    src_file: ""/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}""
+    destination_dir: "opt/webadm/deployment/loyalty/staging/1.83.0/app"
   tasks:
-    - name: Ensure backup directory exists
+    - name: Ensure destination directory exists
       file:
-        path: "{{ backup_dir }}"
+        path: "{{ destination_dir }}"
         state: directory
+        owner: webadm
+        group: webadm
         mode: '0755'
 
-    - name: Find all files and directories to be copied
-      find:
-        paths: "{{ src_dir }}"
-      register: files_and_dirs
+    - name: Copy all files from /test to the destination directory
+      copy:
+        src: "{{ src_file }}"
+        dest: "{{ destination_dir }}"
+        remote_src: yes
 
-    - name: Backup existing files and directories at destination
-      shell: |
-        dest_path="{{ dest_dir }}/{{ item.path | regex_replace('^' + src_dir + '/', '') }}"
-        backup_path="{{ backup_dir }}/{{ item.path | regex_replace('^' + src_dir + '/', '') }}"
-        if [ -e "$dest_path" ]; then
-          mkdir -p "$(dirname "$backup_path")"
-          mv "$dest_path" "$backup_path"
-        fi
-      args:
-        executable: /bin/bash
-      loop: "{{ files_and_dirs.files }}"
-      loop_control:
-        label: "{{ item.path | regex_replace('^' + src_dir + '/', '') }}"
+    - name: opt/webadm/deployment/loyalty/staging/1.83.0/app is owned by webadm
+      ansible.builtin.file:
+        path: "opt/webadm/deployment/loyalty/staging/1.83.0/app{{ src_file }}"
+        owner: webadm
+        group: webadm
+        recurse: yes
