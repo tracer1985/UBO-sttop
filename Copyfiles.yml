@@ -7,8 +7,14 @@
     src_file: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
     destination_dir: "/opt/webadm/deployment/loyalty/staging/1.83.0/app/"
   tasks:
-  
-    - name: Copy all files from /test to the destination directory
+    - name: Ensure source files owned by webadm:webadm
+      file:
+        path: "{{ src_file }}"
+        owner: webadm
+        group: webadm
+        recurse: yes
+
+    - name: Copy all files from source to the destination directory
       copy:
         src: "{{ src_file }}"
         dest: "{{ destination_dir }}"
