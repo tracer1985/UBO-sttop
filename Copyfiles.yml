@@ -13,5 +13,8 @@
         dest: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}"
         flat: yes
         mode: pull
+      rsync_opts:
+          - "--rsh='ssh -o StrictHostKeyChecking=no'"
+      delegate_to: 192.168.100.33
 
      
