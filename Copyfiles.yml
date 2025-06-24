@@ -25,6 +25,3 @@
         owner: yes
         group: yes
         times: yes
-        rsync_opts:
-        
-
