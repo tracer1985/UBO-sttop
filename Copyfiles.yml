@@ -1,0 +1,10 @@
+- name: Copy file from machine1 to machine2 using synchronize
+  hosts: 192.168.100.33
+  become: yes
+  tasks:
+    - name: Synchronize file from machine1 to machine2
+      ansible.builtin.synchronize:
+        src: /opt/webadm/deployment/loyalty/staging/1.83.0/app     # on machine1
+        dest: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}"    # on machine2
+        mode: pull
+        delegate_to: 192.168.100.32
