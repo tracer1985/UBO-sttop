@@ -23,7 +23,7 @@
 
     - name: opt/webadm/deployment/loyalty/staging/1.83.0/app is owned by webadm
       ansible.builtin.file:
-        path: "opt/webadm/deployment/loyalty/staging/1.83.0/app/{{ src_file }}/"
+        path: "opt/webadm/deployment/loyalty/staging/1.83.0/app/"
         owner: webadm
         group: webadm
         recurse: yes
