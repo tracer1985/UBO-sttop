@@ -6,6 +6,8 @@
   vars:
     src_file: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
     destination_dir: "/opt/webadm/deployment/loyalty/staging/1.83.0/app/"
+    today: "{{ lookup('pipe', 'date +%Y-%m-%d') }}"
+    backup_dir: "/tmp/deployment/backup_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
   tasks:
     - name: Ensure source files owned by webadm:webadm
       file:
@@ -13,6 +15,31 @@
         owner: webadm
         group: webadm
         recurse: yes
+
+    - name: Find files in src directory
+      find:
+        paths: "{{ src_file }}"
+        file_type: file
+      register: src_files
+
+    - name: Ensure backup directory exists
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Backup destination files if they exist
+      copy:
+        src: "{{ destination_dir }}{{ item.path | regex_replace('^' + (src_file | regex_escape), '') }}"
+        dest: "{{ backup_dir }}{{ (item.path | basename) }}.{{ today }}"
+        remote_src: yes
+        force: yes
+      when: 
+        - item.path is defined
+        - dest_file.stat.exists
+      loop: "{{ src_files.files }}"
+      vars:
+        dest_file: "{{ lookup('ansible.builtin.stat', destination_dir ~ (item.path | regex_replace('^' + (src_file | regex_escape), '')), wantlist=True) }}"
 
     - name: Copy all files from src to the destination directory and retain ownership and permissions
       synchronize:
