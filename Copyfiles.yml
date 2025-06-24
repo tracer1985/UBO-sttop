@@ -2,7 +2,7 @@
 - name: Copy all files 
   hosts: all
   become: yes
-  remote_user: root
+  remote_user: webadm
   vars:
     src_file: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
     destination_dir: "/opt/webadm/deployment/loyalty/staging/1.83.0/app/"
@@ -19,5 +19,3 @@
         src: "{{ src_file }}"
         dest: "{{ destination_dir }}"
         remote_src: yes
-        owner: webadm
-        group: webadm
