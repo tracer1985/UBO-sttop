@@ -1,10 +1,33 @@
-- name: Copy files from remote server to all hosts
+---
+- name: Copy files and backup if existing
   hosts: all
+  vars:
+    src_dir: "/tmp/deployment/deployment_2025-06-24"
+    dest_dir: "/opt/webadm/deployment/loyalty/staging/1.83.0/app"
+    backup_dir: "/tmp/deployment/backup_2025-06-24"
   tasks:
-    - name: Copy files from remote server to this host with date-stamped directory (ignore errors)
-      ansible.builtin.shell: >
-        scp -o StrictHostKeyChecking=no -r root@192.168.100.33:/opt/webadm/deployment/loyalty/staging/1.83.0/app/linux.yml
-        "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}"
+    - name: Find files to be copied
+      find:
+        paths: "{{ src_dir }}"
+        file_type: file
+      register: files_to_copy
+
+    - name: Backup existing destination files
+      shell: |
+        if [ -f "{{ dest_dir }}/{{ item.path | basename }}" ]; then
+          mv "{{ dest_dir }}/{{ item.path | basename }}" "{{ backup_dir }}/"
+        fi
       args:
         executable: /bin/bash
-      ignore_errors: yes
+      loop: "{{ files_to_copy.files }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+
+    - name: Copy files to destination
+      copy:
+        src: "{{ item.path }}"
+        dest: "{{ dest_dir }}/"
+        mode: '0644'
+      loop: "{{ files_to_copy.files }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
