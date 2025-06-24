@@ -2,7 +2,6 @@
 - name: Copy all files 
   hosts: all
   become: yes
-  remote_user: root
   
   vars:
     src_file: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
