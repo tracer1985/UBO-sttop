@@ -19,6 +19,11 @@
       copy:
         src: "{{ src_file }}"
         dest: "{{ destination_dir }}"
-        remote_src: yes
+        archive: yes
+        perms: yes
+        owner: yes
+        group: yes
+        times: yes
+        rsync_opts:
         
 
