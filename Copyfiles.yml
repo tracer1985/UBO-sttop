@@ -1,3 +1,4 @@
+---
 - name: Copy file from machine1 to machine2 using synchronize
   hosts: 192.168.100.33
   become: yes
