@@ -13,9 +13,12 @@
         owner: webadm
         group: webadm
         recurse: yes
-        
-    - name: Copy all files from /test to the destination directory
+
+    - name: Copy all files from src to the destination directory without changing destination ownership
       copy:
         src: "{{ src_file }}"
         dest: "{{ destination_dir }}"
         remote_src: yes
+        owner: webadm
+        group: webadm
+        recurse: yes
