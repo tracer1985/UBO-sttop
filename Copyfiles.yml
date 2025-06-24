@@ -6,6 +6,7 @@
   vars:
     src_file: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
     destination_dir: "/opt/webadm/deployment/loyalty/staging/1.83.0/app/"
+    backup_dir: "/tmp/deployment/backup_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
   tasks:
     - name: Ensure source files owned by webadm:webadm
       file:
@@ -13,6 +14,35 @@
         owner: webadm
         group: webadm
         recurse: yes
+
+    - name: Find files that will be overwritten
+      shell: |
+        rsync -ani --delete --numeric-ids --archive --perms --owner --group --times "{{ src_file }}" "{{ destination_dir }}" | grep '^>f' | awk '{print $2}'
+      register: overwritten_files
+      changed_when: false
+
+    - name: Create backup directory
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        owner: webadm
+        group: webadm
+        mode: 0755
+
+    - name: Backup files that will be overwritten (preserve all attributes)
+      synchronize:
+        src: "{{ destination_dir }}/{{ item }}"
+        dest: "{{ backup_dir }}/{{ item }}"
+        archive: yes
+        perms: yes
+        owner: yes
+        group: yes
+        times: yes
+        rsync_opts:
+          - "--numeric-ids"
+      with_items: "{{ overwritten_files.stdout_lines }}"
+      when: overwritten_files.stdout_lines | length > 0
+      delegate_to: "{{ inventory_hostname }}"
 
     - name: Copy all files from src to the destination directory and retain ownership and permissions
       synchronize:
