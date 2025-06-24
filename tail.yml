@@ -1,0 +1,11 @@
+---
+- name: Tail last 50 lines of nohup.out on all hosts
+  hosts: all
+  tasks:
+    - name: Tail dnf.librepo.log
+      command: tail -n 50 dnf.librepo.log
+      args:
+        chdir: /var/log   # update this path
+      register: nohup_tail
+    - debug:
+        var: nohup_tail.stdout
