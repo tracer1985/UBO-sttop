@@ -1,9 +1,10 @@
 - name: Copy files from remote server to all hosts
   hosts: all
   tasks:
-    - name: Copy files from remote server to this host with date-stamped directory
+    - name: Copy files from remote server to this host with date-stamped directory (ignore errors)
       ansible.builtin.shell: >
         scp -r root@192.168.100.33:/opt/webadm/deployment/loyalty/staging/1.83.0/app/
         "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}"
       args:
         executable: /bin/bash
+      ignore_errors: yes
