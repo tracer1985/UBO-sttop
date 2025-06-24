@@ -11,7 +11,7 @@
         group: root
         mode: '0755'
 
-    - name: Create backup directory with today's date
+    - name: Create deployment directory with today's date
       file:
         path: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}"
         state: directory
