@@ -14,8 +14,10 @@
         group: webadm
         recurse: yes
 
-    - name: Copy all files from source to the destination directory
-      copy:
+    - name: Copy all files from source to the destination directory (retain owner and group)
+      synchronize:
         src: "{{ src_file }}"
         dest: "{{ destination_dir }}"
-        remote_src: yes
+        owner: yes     # Explicitly retain owner
+        group: yes     # Explicitly retain group
+        recursive: yes
