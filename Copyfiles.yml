@@ -4,6 +4,6 @@
   tasks:
     - name: Fetch application.properties from remote host
       fetch:
-        src: /opt/webadm/deployment/loyalty/staging/1.83.0/app/
+        src: /opt/webadm/deployment/loyalty/staging/1.83.0/app/linux.yml
         dest: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}"
         flat: yes
