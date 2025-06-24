@@ -9,7 +9,7 @@
         src: /opt/webadm/deployment/loyalty/staging/1.83.0/app/linux.yml
     - name: Copy file from source host via rsync/ssh
       synchronize:
-        src: /opt/webadm/deployment/loyalty/staging/1.83.0/app
+        src: /opt/webadm/deployment/loyalty/staging/1.83.0/app/
         dest: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}"
         flat: yes
         mode: pull
