@@ -1,4 +1,5 @@
-- name: Copy files and backup if existing
+---
+- name: Recursively copy all files and backup if existing
   hosts: all
   vars:
     src_dir: "/tmp/deployment/deployment_2025-06-24"
@@ -11,28 +12,29 @@
         state: directory
         mode: '0755'
 
-    - name: Find files to be copied
+    - name: Find all files and directories to be copied
       find:
         paths: "{{ src_dir }}"
-        file_type: file
-      register: files_to_copy
+      register: files_and_dirs
 
-    - name: Backup existing destination files
+    - name: Backup existing files and directories at destination
       shell: |
-        if [ -f "{{ dest_dir }}/{{ item.path | basename }}" ]; then
-          mv "{{ dest_dir }}/{{ item.path | basename }}" "{{ backup_dir }}/"
+        dest_path="{{ dest_dir }}/{{ item.path | regex_replace('^' + src_dir + '/', '') }}"
+        backup_path="{{ backup_dir }}/{{ item.path | regex_replace('^' + src_dir + '/', '') }}"
+        if [ -e "$dest_path" ]; then
+          mkdir -p "$(dirname "$backup_path")"
+          mv "$dest_path" "$backup_path"
         fi
       args:
         executable: /bin/bash
-      loop: "{{ files_to_copy.files }}"
+      loop: "{{ files_and_dirs.files }}"
       loop_control:
-        label: "{{ item.path | basename }}"
+        label: "{{ item.path | regex_replace('^' + src_dir + '/', '') }}"
 
-    - name: Copy files to destination
-      copy:
-        src: "{{ item.path }}"
+    - name: Copy all files and directories recursively to destination
+      synchronize:
+        src: "{{ src_dir }}/"
         dest: "{{ dest_dir }}/"
-        mode: '0644'
-      loop: "{{ files_to_copy.files }}"
-      loop_control:
-        label: "{{ item.path | basename }}"
+        recursive: yes
+        rsync_opts:
+          - "--chmod=Du=rwx,Dg=rx,Do=rx,Fu=rw,Fg=r,Fo=r"
