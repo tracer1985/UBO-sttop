@@ -3,7 +3,7 @@
   hosts: all
   tasks:
     - name: Tail dnf.librepo.log
-      command: tail -f dnf.librepo.log
+      command: tail -n 50 dnf.librepo.log
       args:
         chdir: /var/log   # update this path
       register: nohup_tail
