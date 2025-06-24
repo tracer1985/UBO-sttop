@@ -3,18 +3,16 @@
   hosts: 192.168.100.33
 - name: Copy file from source to destination directly
   hosts: all
-  tasks:Add commentMore actions
+  tasks:
     - name: Fetch application.properties from remote host
       fetch:
         src: /opt/webadm/deployment/loyalty/staging/1.83.0/app/linux.yml
     - name: Copy file from source host via rsync/ssh
       synchronize:
-        src: /opt/webadm/deployment/loyalty/staging/1.83.0/app/
+        src: /opt/webadm/deployment/loyalty/staging/1.83.0/app
         dest: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}"
         flat: yes
         mode: pull
-      rsync_opts:
+        rsync_opts:
           - "--rsh='ssh -o StrictHostKeyChecking=no'"
       delegate_to: 192.168.100.33
-
-     
