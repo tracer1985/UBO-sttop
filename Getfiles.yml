@@ -1,18 +1,18 @@
 ---
-- name: Copy file from remote source to host using rsync
+- name: Copy file from remote source (192.168.100.33) to all target hosts using rsync
   hosts: all
   become: yes
   vars:
     src_host: 192.168.100.33
     src_path: "/tmp/source"
-    dest_path: /tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}
+    dest_path: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}"
   tasks:
-    - name: Copy file or directory from remote source to host with rsync
+    - name: Copy file or directory from 192.168.100.33 to target host with rsync
       ansible.builtin.synchronize:
         src: "{{ src_path }}"
         dest: "{{ dest_path }}"
         mode: pull
-        recursive: yes   # Set to 'no' if copying a single file
+        recursive: yes
         delete: no
         compress: yes
         rsync_opts:
