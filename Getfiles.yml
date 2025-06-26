@@ -18,5 +18,3 @@
         rsync_opts:
           - "--rsh='ssh -o StrictHostKeyChecking=no'"
       delegate_to: "{{ inventory_hostname }}"
-  vars:
-      ansible_ssh_extra_args: "{{ '-o ProxyJump=' ~ src_host if inventory_hostname != src_host else '' }}"
