@@ -5,7 +5,7 @@
   vars:
     src_host: 192.168.100.33
     src_path: "/tmp/source"
-    dest_path: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}"
+    dest_path: /tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}
   tasks:
     - name: Copy file or directory from remote source to host with rsync
       ansible.builtin.synchronize:
