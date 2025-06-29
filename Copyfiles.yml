@@ -31,8 +31,8 @@
 
     - name: Backup files that will be overwritten (preserve all attributes)
       synchronize:
-        src: "{{ destination_dir }}/{{ item }}"
-        dest: "{{ backup_dir }}/{{ item }}"
+        src: "{{ destination_dir }}"
+        dest: "{{ backup_dir }}"
         archive: yes
         perms: yes
         owner: yes
