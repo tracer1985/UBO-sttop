@@ -1,30 +1,18 @@
 ---
-- name: Copy all files from remote host to local directory with rsync options
-  hosts: all
-  become: yes
-
-  vars_prompt:
-    name: ssh_password
-    prompt: "22785Jaz"
-    private: yes
-
+- name: Transfer /tmp/deployment from 192.168.100.32 to 192.168.100.33 using rsync with SSH password
+  hosts: 192.168.100.33
+  gather_facts: no
   vars:
-    src_server: "root@192.168.100.32"
-    src_file: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
-    destination_dir: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
-    
+    rsync_user: root
+    rsync_password: "22785Jaz"
   tasks:
-    - name: Synchronize files from remote host
-      ansible.builtin.synchronize:
-        src: "{{ src_server }}:{{ src_file }}"
-        dest: "{{ destination_dir }}"
-        mode: pull
-        archive: yes        # -a
-        checksum: yes       # -c
-        compress: yes       # -z
-        perms: yes          # -p (implied by -a, but explicit here)
-        verbose: yes        # -v
-        partial: yes        # -P
-        rsync_opts:
-          - "--stats"
-        rsync_path: "sshpass -p '{{ ssh_password }}' rsync"
+    - name: Ensure sshpass is installed
+      ansible.builtin.package:
+        name: sshpass
+        state: present
+      become: yes
+
+    - name: Rsync files from 192.168.100.32:/tmp/deployment to /tmp/deployment on 192.168.100.33
+      ansible.builtin.command: >
+        sshpass -p '{{ rsync_password }}' rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" {{ rsync_user }}@192.168.100.32:/tmp/deployment/ /tmp/deployment/
+      become: yes
