@@ -3,10 +3,16 @@
   hosts: all
   become: yes
 
+ vars_prompt:
+    - name: ssh_password
+      prompt: "22785Jaz"
+      private: yes
+
   vars:
     src_server: "root@192.168.100.32"
     src_file: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
     destination_dir: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
+    
   tasks:
     - name: Synchronize files from remote host
       ansible.builtin.synchronize:
@@ -21,3 +27,4 @@
         partial: yes        # -P
         rsync_opts:
           - "--stats"
+        rsync_path: "sshpass -p '{{ ssh_password }}' rsync"
