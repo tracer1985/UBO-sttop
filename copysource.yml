@@ -3,10 +3,10 @@
   hosts: all
   become: yes
 
- vars_prompt:
-    - name: ssh_password
-      prompt: "22785Jaz"
-      private: yes
+  vars_prompt:
+    name: ssh_password
+    prompt: "22785Jaz"
+    private: yes
 
   vars:
     src_server: "root@192.168.100.32"
