@@ -4,9 +4,9 @@
   become: yes
 
   vars:
-    src_file: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
-    destination_dir: "/opt/webadm/deployment/loyalty/staging/1.83.0/app/"
-    backup_dir: "/tmp/deployment/backup_{{ lookup('pipe', 'date +%Y-%m-%d') }}/"
+    src_file: "/tmp/deployment/deployment_{{ lookup('pipe', 'date +%Y-%m-%d') }}"
+    destination_dir: "/opt/webadm/deployment/loyalty/staging/1.83.0/app"
+    backup_dir: "/tmp/deployment/backup_{{ lookup('pipe', 'date +%Y-%m-%d') }}"
   tasks:
     - name: Ensure source files owned by webadm:webadm
       file:
